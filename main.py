@@ -65,7 +65,6 @@ class Game:
                     platform.kill()
                     self.score += random.randrange(5, 10)
 
-
         # Die condition
         if self.player.rect.bottom > HEIGHT:
             # Scroll the camera with the player
@@ -81,11 +80,10 @@ class Game:
         while len(self.platforms) < 10:
             width = random.randrange(50, 100)
             p = Platform(random.randrange(0, WIDTH - width),  # Generate X spawn cords.
-                         random.randrange(-75, -30), # Generate Y spawn cords.
+                         random.randrange(-75, -30),  # Generate Y spawn cords.
                          width, 20)  # Width of platform and HEIGHT of platform
             self.all_sprites.add(p)
             self.platforms.add(p)
-
 
     def events(self):
         # Game Loop - events
@@ -102,7 +100,7 @@ class Game:
 
     def draw(self):
         # Game Loop - draw
-        self.screen.fill(BLACK)
+        self.screen.fill(BGCOLOR)
         self.all_sprites.draw(self.screen)
         self.draw_text(str(self.score), 22, WHITE, WIDTH / 2, 15)
 
@@ -110,11 +108,36 @@ class Game:
 
     def show_start_screen(self):
         # Game splash screen
-        pass
+        self.screen.fill(BGCOLOR)
+        self.draw_text(TITLE, 50, WHITE, WIDTH / 2, HEIGHT / 4)
+        self.draw_text("ARROWS to Move. SPACE to Jump", 22, WHITE, WIDTH / 2, HEIGHT / 2)
+        self.draw_text("Press a key to play.", 22, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
+        pg.display.flip()
+        self.wait_for_key()
 
     def show_gameover_screen(self):
+        # Skip GameOver screen if "X" is pressed while playing
+        if not self.running:
+            return
+
         # Game over screen
-        pass
+        self.screen.fill(BGCOLOR)
+        self.draw_text("GAME OVER", 50, WHITE, WIDTH / 2, HEIGHT / 4)
+        self.draw_text("Score: " + str(self.score), 22, WHITE, WIDTH / 2, HEIGHT / 2)
+        self.draw_text("Press any key to play again.", 22, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
+        pg.display.flip()
+        self.wait_for_key()
+
+    def wait_for_key(self):
+        waiting = True
+        while waiting:
+            self.clock.tick(FPS)
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    waiting = False
+                    self.running = False
+                if event.type == pg.KEYUP:
+                    waiting = False
 
     def draw_text(self, text, size, color, x, y):
         font = pg.font.Font(self.font_name, size)
@@ -123,11 +146,12 @@ class Game:
         text_rect.midtop = (x, y)
         self.screen.blit(text_surface, text_rect)
 
+
 g = Game()
 g.show_start_screen()
 while g.running:
-    g.new()
-    g.run()
+    g.new()  # Generates a new game
+    g.run()  # Runs the game
     g.show_gameover_screen()
 
 pg.quit()
