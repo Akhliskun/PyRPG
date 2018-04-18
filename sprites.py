@@ -4,6 +4,7 @@ from settings import *
 
 vec = pg.math.Vector2
 
+
 class Spritesheet:
     # Utility class for loading and parsing spritesheets
     def __init__(self, filename):
@@ -15,6 +16,7 @@ class Spritesheet:
         image.blit(self.spritesheet, (0, 0), (x, y, width, height))
         image = pg.transform.scale(image, (int(width / 2), int(height / 2)))
         return image
+
 
 class Player(pg.sprite.Sprite):
     def __init__(self, game):
@@ -40,12 +42,15 @@ class Player(pg.sprite.Sprite):
 
         self.walk_frames_r = [self.game.spritesheet.get_image(678, 860, 120, 201),
                               self.game.spritesheet.get_image(692, 1458, 120, 207)]
-        for frame in self.standing_frames:
+        for frame in self.walk_frames_r:
             frame.set_colorkey(BLACK)  # Fix transparency
 
         self.walk_frames_l = []  # Flip walking_frames_r
         for frame in self.walk_frames_r:
             self.walk_frames_l.append(pg.transform.flip(frame, True, False))
+            for frame in self.walk_frames_l:
+                frame.set_colorkey(BLACK)  # Fix transparency
+
         self.jump_frame = self.game.spritesheet.get_image(382, 763, 150, 181)
         self.jump_frame.set_colorkey(BLACK)  # Fix transparency
 
@@ -68,21 +73,47 @@ class Player(pg.sprite.Sprite):
 
         # Applies friction
         self.acc.x += self.vel.x * PLAYER_FRICTION
-        # Ecuation of motion
 
+        # Equation of motion
         self.vel += self.acc
+        # Fix animation not knowing that our player stopped.
+        # Because of friction, our speed will never be 0.
+        # So we have to set a "lowest" threshold before we change to "Standing" state.
+        if abs(self.vel.x) < 0.5:  # TODO: Move this to settings.py
+            self.vel.x = 0
         self.pos += self.vel + 0.5 * self.acc
 
         # Wrap around the sides of the screen
-        if self.pos.x > WIDTH:
-            self.pos.x = 0
-        if self.pos.x < 0:
-            self.pos.x = WIDTH
+        if self.pos.x > WIDTH + self.rect.width / 2:
+            self.pos.x = 0 - self.rect.width / 2
+        if self.pos.x < 0 - self.rect.width / 2:
+            self.pos.x = WIDTH + self.rect.width / 2
 
         self.rect.midbottom = self.pos
 
     def animate(self):
         now = pg.time.get_ticks()
+        # Get movement state.
+        if self.vel.x != 0:
+            self.walking = True
+        else:
+            self.walking = False
+
+        # Show walking animation
+        if self.walking:
+            if now - self.last_update > 150:  # TODO: Move this to settings.py = Worth exploring a "per sprite" implementation.
+                self.last_update = now
+                self.current_frame = (self.current_frame + 1) % len(self.walk_frames_l)
+                bottom = self.rect.bottom
+                if self.vel.x > 0:
+                    self.image = self.walk_frames_r[self.current_frame]
+                else:
+                    self.image = self.walk_frames_l[self.current_frame]
+
+                self.rect = self.image.get_rect()
+                self.rect.bottom = bottom
+
+        # Show IDLE / Standing animation
         if not self.jumping and not self.walking:
             if now - self.last_update > 350:  # TODO: Move this to settings.py
                 self.last_update = now
@@ -91,6 +122,7 @@ class Player(pg.sprite.Sprite):
                 self.image = self.standing_frames[self.current_frame]
                 self.rect = self.image.get_rect()
                 self.rect.bottom = bottom
+
 
 class Platform(pg.sprite.Sprite):
     def __init__(self, x, y, w, h):

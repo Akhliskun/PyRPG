@@ -37,7 +37,6 @@ class Game:
 
             self.spritesheet = Spritesheet(path.join(img_dir, SPRITESHEET))
 
-
     def new(self):
         # Restarts game / Start a new game
         self.score = 0
@@ -63,7 +62,7 @@ class Game:
     def update(self):
         # game loop - update
         self.all_sprites.update()
-        print(str(int(self.clock.get_fps())))
+        # print(str(int(self.clock.get_fps()))) # Display FPS in Console
 
         # Check if player hits a platform WHILE falling
         if self.player.vel.y > 0:
