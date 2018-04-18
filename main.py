@@ -7,6 +7,7 @@ from settings import *
 from sprites import *
 from keybinds import *
 
+
 class Game:
     def __init__(self):
         # initialize game window, etc
@@ -30,10 +31,6 @@ class Game:
             self.all_sprites.add(p)
             self.platforms.add(p)
 
-
-
-
-
     def run(self):
         # game loop
         self.playing = True
@@ -54,6 +51,26 @@ class Game:
             if hits:
                 self.player.pos.y = hits[0].rect.top + 1
                 self.player.vel.y = 0
+
+        # If player reaches top part of the screen (1/4) scroll platforms down
+        if self.player.rect.top <= HEIGHT / 4:
+            self.player.pos.y += abs(self.player.vel.y)
+            for platform in self.platforms:
+                platform.rect.y += abs(self.player.vel.y)
+
+                # Unload platforms that are not in game windows. (Window HEIGHT + 20%)
+                if platform.rect.top >= (HEIGHT * 1.20):
+                    platform.kill()
+
+        # Spawn new platform to keep same avg of platforms
+        while len(self.platforms) < 10:
+            width = random.randrange(50, 100)
+            p = Platform(random.randrange(0, WIDTH - width),  # Generate X spawn cords.
+                         random.randrange(-75, -30), # Generate Y spawn cords.
+                         width, 20)  # Widtch of platform and HEIGHT of platform
+            self.all_sprites.add(p)
+            self.platforms.add(p)
+
 
     def events(self):
         # Game Loop - events
