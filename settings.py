@@ -1,0 +1,27 @@
+# Game options / settings
+
+# Define basic colors
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+DARKGREY = (40, 40, 40)
+LIGHTGREY = (100, 100, 100)
+YELLOW = (255, 255, 0)
+
+# Basic window config
+WIDTH = 1024
+HEIGHT = 768
+FPS = 60
+TITLE = "My Game"
+BGCOLOR = DARKGREY
+
+TILESIZE = 32
+GRIDWIDTH = WIDTH / TILESIZE
+GRIDHEIGHT = HEIGHT / TILESIZE
+
+# Player proprieties
+PLAYER_ACC = 0.5
+PLAYER_FRICTION = -0.12
+PLAYER_GRAVITY = 0.8
