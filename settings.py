@@ -18,6 +18,7 @@ FPS = 60
 TITLE = "My Game"
 BGCOLOR = LIGHTBLUE
 FONT_NAME = 'arial'
+HS_FILE = "highscore.txt"
 
 TILESIZE = 32
 GRIDWIDTH = WIDTH / TILESIZE

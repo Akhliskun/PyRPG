@@ -2,6 +2,7 @@
 
 import pygame as pg
 import random
+from os import path
 
 from settings import *
 from sprites import *
@@ -19,6 +20,20 @@ class Game:
         pg.display.set_caption(TITLE + " | FPS: " + str(int(self.clock.get_fps())))
         self.running = True
         self.font_name = pg.font.match_font(FONT_NAME)
+        self.load_data()
+
+    def load_data(self):
+        # Load HighScore
+        self.dir = path.dirname(__file__)
+        with open(path.join(self.dir, HS_FILE), 'w') as f:
+            # Catch exception if file doesn't exist already
+            try:
+                self.highscore = int(f.read())
+            # Self populate the HS to be 0
+            except:
+                self.highscore = 0
+
+            f.close()
 
     def new(self):
         # Restarts game / Start a new game
@@ -112,6 +127,7 @@ class Game:
         self.draw_text(TITLE, 50, WHITE, WIDTH / 2, HEIGHT / 4)
         self.draw_text("ARROWS to Move. SPACE to Jump", 22, WHITE, WIDTH / 2, HEIGHT / 2)
         self.draw_text("Press a key to play.", 22, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
+        self.draw_text("High Score:" + str(self.highscore), 22, WHITE, WIDTH / 2, 15)
         pg.display.flip()
         self.wait_for_key()
 
@@ -125,6 +141,15 @@ class Game:
         self.draw_text("GAME OVER", 50, WHITE, WIDTH / 2, HEIGHT / 4)
         self.draw_text("Score: " + str(self.score), 22, WHITE, WIDTH / 2, HEIGHT / 2)
         self.draw_text("Press any key to play again.", 22, WHITE, WIDTH / 2, HEIGHT * 3 / 4)
+        # Check for new High Score.
+        if self.score > self.highscore:
+            self.highscore = self.score
+            self.draw_text("You got a new HIGH SCORE: ", 22, WHITE, WIDTH / 2, HEIGHT / 2 + 40)
+            with open(path.join(self.dir, HS_FILE), 'w') as f:
+                f.write(str(self.score))
+        else:
+            self.draw_text("HIGH SCORE: " + str(self.highscore), 22, WHITE, WIDTH / 2, HEIGHT / 2 + 40)
+
         pg.display.flip()
         self.wait_for_key()
 
