@@ -19,6 +19,7 @@ TITLE = "My Game"
 BGCOLOR = LIGHTBLUE
 FONT_NAME = 'arial'
 HS_FILE = "highscore.txt"
+SPRITESHEET = "spritesheet_jumper.png"
 
 TILESIZE = 32
 GRIDWIDTH = WIDTH / TILESIZE
