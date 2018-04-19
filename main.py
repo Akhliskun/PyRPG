@@ -38,7 +38,7 @@ class Game:
             self.spritesheet = Spritesheet(path.join(img_dir, SPRITESHEET))
             # Load sounds
             self.sound_dir = path.join(self.dir, 'sounds')
-            self.jump_sound = pg.mixer.Sound(path.join(self.sound_dir, 'player_jump.wav')) # TODO: Move this to a SoundDB system
+            self.jump_sound = pg.mixer.Sound(path.join(self.sound_dir, 'player_jump.wav'))  # TODO: Move this to a SoundDB system
 
     def new(self):
         # Restarts game / Start a new game
@@ -52,7 +52,7 @@ class Game:
             p = Platform(self, *platform)  # Take the list and explode it to list items
             self.all_sprites.add(p)
             self.platforms.add(p)
-        pg.mixer.music.load(path.join(self.sound_dir, 'maintheme.ogg'))
+        pg.mixer.music.load(path.join(self.sound_dir, 'maintheme.ogg'))  # TODO: Move this to a SoundDB system
 
     def run(self):
         # game loop
@@ -78,10 +78,11 @@ class Game:
                 for hit in hits:
                     if hit.rect.bottom > lowest.rect.bottom:
                         lowest = hit
-                if self.player.pos.y < lowest.rect.centery:
-                    self.player.pos.y = lowest.rect.top + 1
-                    self.player.vel.y = 0
-                    self.player.jumping = False
+                if lowest.rect.right + 7 > self.player.pos.x > lowest.rect.left - 7:
+                    if self.player.pos.y < lowest.rect.centery:
+                        self.player.pos.y = lowest.rect.top + 1
+                        self.player.vel.y = 0
+                        self.player.jumping = False
 
         # If player reaches top part of the screen (1/4) scroll platforms down
         if self.player.rect.top <= HEIGHT / 4:
@@ -140,7 +141,7 @@ class Game:
 
     def show_start_screen(self):
         # Game splash screen
-        pg.mixer.music.load(path.join(self.sound_dir, 'mainmenu.ogg'))
+        pg.mixer.music.load(path.join(self.sound_dir, 'mainmenu.ogg'))  # TODO: Move this to a SoundDB system
         pg.mixer.music.play(loops=-1)
         self.screen.fill(BGCOLOR)
         self.draw_text(TITLE, 50, WHITE, WIDTH / 2, HEIGHT / 4)
@@ -157,7 +158,7 @@ class Game:
             return
 
         # Game over screen
-        pg.mixer.music.load(path.join(self.sound_dir, 'mainmenu.ogg'))
+        pg.mixer.music.load(path.join(self.sound_dir, 'mainmenu.ogg'))  # TODO: Move this to a SoundDB system
         pg.mixer.music.play(loops=-1)
         self.screen.fill(BGCOLOR)
         self.draw_text("GAME OVER", 50, WHITE, WIDTH / 2, HEIGHT / 4)
