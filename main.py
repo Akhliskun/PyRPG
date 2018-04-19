@@ -68,8 +68,12 @@ class Game:
         if self.player.vel.y > 0:
             hits = pg.sprite.spritecollide(self.player, self.platforms, False)
             if hits:
-                if self.player.pos.y < hits[0].rect.bottom:
-                    self.player.pos.y = hits[0].rect.top + 1
+                lowest = hits[0]
+                for hit in hits:
+                    if hit.rect.bottom > lowest.rect.bottom:
+                        lowest = hit
+                if self.player.pos.y < lowest.rect.centery:
+                    self.player.pos.y = lowest.rect.top + 1
                     self.player.vel.y = 0
 
         # If player reaches top part of the screen (1/4) scroll platforms down
