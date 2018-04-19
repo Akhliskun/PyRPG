@@ -73,9 +73,9 @@ class Game:
 
         # If player reaches top part of the screen (1/4) scroll platforms down
         if self.player.rect.top <= HEIGHT / 4:
-            self.player.pos.y += abs(self.player.vel.y)
+            self.player.pos.y += max(abs(self.player.vel.y), 2)
             for platform in self.platforms:
-                platform.rect.y += abs(self.player.vel.y)
+                platform.rect.y += max(abs(self.player.vel.y), 2)
 
                 # Unload platforms that are not in game windows. (Window HEIGHT + 20%)
                 if platform.rect.top >= (HEIGHT * 1.20):
