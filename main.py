@@ -80,7 +80,7 @@ class Game:
             print("Spawned Mob")
 
         # Collision with the MOB
-        mob_hits = pg.sprite.spritecollide(self.player, self.mobs, False)
+        mob_hits = pg.sprite.spritecollide(self.player, self.mobs, False, pg.sprite.collide_mask)
         if mob_hits:
             self.playing = False
 
