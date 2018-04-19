@@ -135,12 +135,31 @@ class Player(pg.sprite.Sprite):
         self.mask = pg.mask.from_surface(self.image)  # Pixel Perfect Collision (Mark collision)
 
 
+class Cloud(pg.sprite.Sprite):
+    def __init__(self, game):
+        self._layer = CLOUD_LAYER
+        self.groups = game.all_sprites, game.clouds
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = choice(self.game.cloud_images)
+        self.image.set_colorkey(BLACK)
+        self.rect = self.image.get_rect()
+        scale = randrange(50, 101) / 100
+        self.image = pg.transform.scale(self.image, (int(self.rect.width * scale),
+                                                     int(self.rect.height * scale)))
+        self.rect.x = randrange(WIDTH - self.rect.width)
+        self.rect.y = randrange(-500, -50)
+
+    def update(self):
+        if self.rect.top > HEIGHT * 2:
+            self.kill()
+
 class Platform(pg.sprite.Sprite):
     def __init__(self, game, x, y):
         self._layer = PLATFORM_LAYER
         self.groups = game.all_sprites, game.platforms
-        self.game = game
         pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
         # TODO: Move this do a SpritesDB location where I have every sprite's cords stores. Then call by name
         images = [self.game.spritesheet.get_image(0, 288, 380, 94),
                   self.game.spritesheet.get_image(213, 1662, 201, 100)]

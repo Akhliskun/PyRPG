@@ -31,11 +31,18 @@ class Game:
             # Catch exception if file doesn't exist already
             try:
                 self.highscore = int(f.read())
+
             # Self populate the HS to be 0
             except:
                 self.highscore = 0
 
             self.spritesheet = Spritesheet(path.join(img_dir, SPRITESHEET))
+
+            # Load cloud images
+            self.cloud_images = []
+            for i in range(1, 4):
+                self.cloud_images.append(pg.image.load(path.join(img_dir, 'cloud{}.png'.format(i))).convert())
+
             # Load sounds
             self.sound_dir = path.join(self.dir, 'sounds')
             self.jump_sound = pg.mixer.Sound(
@@ -50,12 +57,16 @@ class Game:
         self.platforms = pg.sprite.Group()
         self.powerups = pg.sprite.Group()
         self.mobs = pg.sprite.Group()
+        self.clouds = pg.sprite.Group()
         self.player = Player(self)
 
         for platform in PLATFORM_LIST:
             Platform(self, *platform)  # Take the list and explode it to list items
         self.mob_timer = 0
         pg.mixer.music.load(path.join(self.sound_dir, 'maintheme.ogg'))  # TODO: Move this to a SoundDB system
+        for i in range(6):
+            c = Cloud(self)
+            c.rect.y += 500
 
     def run(self):
         # game loop
@@ -102,7 +113,11 @@ class Game:
 
         # If player reaches top part of the screen (1/4) scroll platforms down
         if self.player.rect.top <= HEIGHT / 4:
+            if randrange(100) < 15:
+                Cloud(self)
             self.player.pos.y += max(abs(self.player.vel.y), 2)
+            for cloud in self.clouds:
+                cloud.rect.y += max(abs(self.player.vel.y / 2), 2)
             for mob in self.mobs:
                 mob.rect.y += max(abs(self.player.vel.y), 2)
             for platform in self.platforms:
