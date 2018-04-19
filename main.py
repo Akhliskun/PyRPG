@@ -38,19 +38,23 @@ class Game:
             self.spritesheet = Spritesheet(path.join(img_dir, SPRITESHEET))
             # Load sounds
             self.sound_dir = path.join(self.dir, 'sounds')
-            self.jump_sound = pg.mixer.Sound(path.join(self.sound_dir, 'player_jump.wav'))  # TODO: Move this to a SoundDB system
-            self.boost_sound = pg.mixer.Sound(path.join(self.sound_dir, 'powerup_sound.wav'))  # TODO: Move this to a SoundDB system
+            self.jump_sound = pg.mixer.Sound(
+                path.join(self.sound_dir, 'player_jump.wav'))  # TODO: Move this to a SoundDB system
+            self.boost_sound = pg.mixer.Sound(
+                path.join(self.sound_dir, 'powerup_sound.wav'))  # TODO: Move this to a SoundDB system
+
     def new(self):
         # Restarts game / Start a new game
         self.score = 0
-        self.all_sprites = pg.sprite.Group()
+        self.all_sprites = pg.sprite.LayeredUpdates()
         self.platforms = pg.sprite.Group()
         self.powerups = pg.sprite.Group()
+        self.mobs = pg.sprite.Group()
         self.player = Player(self)
-
 
         for platform in PLATFORM_LIST:
             Platform(self, *platform)  # Take the list and explode it to list items
+        self.mob_timer = 0
         pg.mixer.music.load(path.join(self.sound_dir, 'maintheme.ogg'))  # TODO: Move this to a SoundDB system
 
     def run(self):
@@ -67,7 +71,20 @@ class Game:
     def update(self):
         # game loop - update
         self.all_sprites.update()
-        print(str(int(self.clock.get_fps()))) # Display FPS in Console
+
+        # Spawn a mob
+        now = pg.time.get_ticks()
+        if now - self.mob_timer > 5000 + random.choice([-1000, -500, 0, 500, 1000]):
+            self.mob_timer = now
+            Mob(self)
+            print("Spawned Mob")
+
+        # Collision with the MOB
+        mob_hits = pg.sprite.spritecollide(self.player, self.mobs, False)
+        if mob_hits:
+            self.playing = False
+
+        # print(str(int(self.clock.get_fps()))) # Display FPS in Console
 
         # Check if player hits a platform WHILE falling
         if self.player.vel.y > 0:
@@ -86,9 +103,10 @@ class Game:
         # If player reaches top part of the screen (1/4) scroll platforms down
         if self.player.rect.top <= HEIGHT / 4:
             self.player.pos.y += max(abs(self.player.vel.y), 2)
+            for mob in self.mobs:
+                mob.rect.y += max(abs(self.player.vel.y), 2)
             for platform in self.platforms:
                 platform.rect.y += max(abs(self.player.vel.y), 2)
-
                 # Unload platforms that are not in game windows. (Window HEIGHT + 20%)
                 if platform.rect.top >= (HEIGHT * 1.20):
                     platform.kill()
@@ -119,7 +137,6 @@ class Game:
             Platform(self, random.randrange(0, WIDTH - width),  # Generate X spawn cords.
                      random.randrange(-75, -30))  # Generate Y spawn cords.
 
-
     def events(self):
         # Game Loop - events
         for event in pg.event.get():
@@ -140,7 +157,7 @@ class Game:
         # Game Loop - draw
         self.screen.fill(BGCOLOR)
         self.all_sprites.draw(self.screen)
-        self.screen.blit(self.player.image, self.player.rect)  # Places the Player Sprite ontop of everything else.
+
         self.draw_text(str(self.score), 22, WHITE, WIDTH / 2, 15)
 
         pg.display.flip()
