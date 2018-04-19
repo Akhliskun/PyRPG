@@ -62,7 +62,7 @@ class Game:
     def update(self):
         # game loop - update
         self.all_sprites.update()
-        # print(str(int(self.clock.get_fps()))) # Display FPS in Console
+        print(str(int(self.clock.get_fps()))) # Display FPS in Console
 
         # Check if player hits a platform WHILE falling
         if self.player.vel.y > 0:
@@ -118,6 +118,7 @@ class Game:
         # Game Loop - draw
         self.screen.fill(BGCOLOR)
         self.all_sprites.draw(self.screen)
+        self.screen.blit(self.player.image, self.player.rect)
         self.draw_text(str(self.score), 22, WHITE, WIDTH / 2, 15)
 
         pg.display.flip()
