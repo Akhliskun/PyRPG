@@ -36,6 +36,9 @@ class Game:
                 self.highscore = 0
 
             self.spritesheet = Spritesheet(path.join(img_dir, SPRITESHEET))
+            # Load sounds
+            self.sound_dir = path.join(self.dir, 'sounds')
+            self.jump_sound = pg.mixer.Sound(path.join(self.sound_dir, 'player_jump.wav')) # TODO: Move this to a SoundDB system
 
     def new(self):
         # Restarts game / Start a new game
@@ -49,15 +52,18 @@ class Game:
             p = Platform(self, *platform)  # Take the list and explode it to list items
             self.all_sprites.add(p)
             self.platforms.add(p)
+        pg.mixer.music.load(path.join(self.sound_dir, 'maintheme.ogg'))
 
     def run(self):
         # game loop
+        pg.mixer.music.play(loops=-1)  # Infinite looping.
         self.playing = True
         while self.playing:
             self.clock.tick(FPS)
             self.events()
             self.update()
             self.draw()
+        pg.mixer.music.fadeout(500)
 
     def update(self):
         # game loop - update
@@ -134,6 +140,8 @@ class Game:
 
     def show_start_screen(self):
         # Game splash screen
+        pg.mixer.music.load(path.join(self.sound_dir, 'mainmenu.ogg'))
+        pg.mixer.music.play(loops=-1)
         self.screen.fill(BGCOLOR)
         self.draw_text(TITLE, 50, WHITE, WIDTH / 2, HEIGHT / 4)
         self.draw_text("ARROWS to Move. SPACE to Jump", 22, WHITE, WIDTH / 2, HEIGHT / 2)
@@ -141,6 +149,7 @@ class Game:
         self.draw_text("High Score:" + str(self.highscore), 22, WHITE, WIDTH / 2, 15)
         pg.display.flip()
         self.wait_for_key()
+        pg.mixer.music.fadeout(500)
 
     def show_gameover_screen(self):
         # Skip GameOver screen if "X" is pressed while playing
@@ -148,6 +157,8 @@ class Game:
             return
 
         # Game over screen
+        pg.mixer.music.load(path.join(self.sound_dir, 'mainmenu.ogg'))
+        pg.mixer.music.play(loops=-1)
         self.screen.fill(BGCOLOR)
         self.draw_text("GAME OVER", 50, WHITE, WIDTH / 2, HEIGHT / 4)
         self.draw_text("Score: " + str(self.score), 22, WHITE, WIDTH / 2, HEIGHT / 2)
@@ -163,6 +174,7 @@ class Game:
 
         pg.display.flip()
         self.wait_for_key()
+        pg.mixer.music.fadeout(500)
 
     def wait_for_key(self):
         waiting = True
