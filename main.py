@@ -39,19 +39,18 @@ class Game:
             # Load sounds
             self.sound_dir = path.join(self.dir, 'sounds')
             self.jump_sound = pg.mixer.Sound(path.join(self.sound_dir, 'player_jump.wav'))  # TODO: Move this to a SoundDB system
-
+            self.boost_sound = pg.mixer.Sound(path.join(self.sound_dir, 'powerup_sound.wav'))  # TODO: Move this to a SoundDB system
     def new(self):
         # Restarts game / Start a new game
         self.score = 0
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
+        self.powerups = pg.sprite.Group()
         self.player = Player(self)
-        self.all_sprites.add(self.player)
+
 
         for platform in PLATFORM_LIST:
-            p = Platform(self, *platform)  # Take the list and explode it to list items
-            self.all_sprites.add(p)
-            self.platforms.add(p)
+            Platform(self, *platform)  # Take the list and explode it to list items
         pg.mixer.music.load(path.join(self.sound_dir, 'maintheme.ogg'))  # TODO: Move this to a SoundDB system
 
     def run(self):
@@ -95,6 +94,14 @@ class Game:
                     platform.kill()
                     self.score += random.randrange(5, 10)
 
+        # PowerUps collision detection
+        powerup_hits = pg.sprite.spritecollide(self.player, self.powerups, True)
+        for powerup in powerup_hits:
+            if powerup.type == 'boost':
+                self.boost_sound.play()
+                self.player.vel.y = -BOOST_POWER
+                self.player.jumping = False
+
         # Die condition
         if self.player.rect.bottom > HEIGHT:
             # Scroll the camera with the player
@@ -109,10 +116,9 @@ class Game:
         # Spawn new platform to keep same avg of platforms
         while len(self.platforms) < 10:
             width = random.randrange(50, 100)
-            p = Platform(self, random.randrange(0, WIDTH - width),  # Generate X spawn cords.
-                         random.randrange(-75, -30))  # Generate Y spawn cords.
-            self.all_sprites.add(p)
-            self.platforms.add(p)
+            Platform(self, random.randrange(0, WIDTH - width),  # Generate X spawn cords.
+                     random.randrange(-75, -30))  # Generate Y spawn cords.
+
 
     def events(self):
         # Game Loop - events

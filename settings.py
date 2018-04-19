@@ -31,6 +31,10 @@ PLAYER_FRICTION = -0.12
 PLAYER_GRAVITY = 0.8
 PLAYER_JUMPPOWER = 22
 
+# Game proprieties
+BOOST_POWER = 60
+POWER_SPAWN_RATE = 7
+
 # Starting Platforms
 PLATFORM_LIST = [(0, HEIGHT - 60),
                  (WIDTH / 2 - 150, HEIGHT * 3 / 4),

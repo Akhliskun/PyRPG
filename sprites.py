@@ -1,7 +1,7 @@
 # Sprites classes for the game
 import pygame as pg
 from settings import *
-from random import choice
+from random import choice, randrange
 
 vec = pg.math.Vector2
 
@@ -21,7 +21,8 @@ class Spritesheet:
 
 class Player(pg.sprite.Sprite):
     def __init__(self, game):
-        pg.sprite.Sprite.__init__(self)
+        self.groups = game.all_sprites
+        pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.walking = False
         self.jumping = False
@@ -134,8 +135,9 @@ class Player(pg.sprite.Sprite):
 
 class Platform(pg.sprite.Sprite):
     def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.platforms
         self.game = game
-        pg.sprite.Sprite.__init__(self)
+        pg.sprite.Sprite.__init__(self, self.groups)
         # TODO: Move this do a SpritesDB location where I have every sprite's cords stores. Then call by name
         images = [self.game.spritesheet.get_image(0, 288, 380, 94),
                   self.game.spritesheet.get_image(213, 1662, 201, 100)]
@@ -144,3 +146,26 @@ class Platform(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+        if randrange(100) < POWER_SPAWN_RATE:
+            PowerUps(self.game, self)
+
+
+class PowerUps(pg.sprite.Sprite):
+    def __init__(self, game, platform):
+        self.groups = game.all_sprites, game.powerups
+        pg.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.platform = platform
+        self.type = choice(['boost'])  # Choose which powerup will get spawned
+
+        # TODO: Move this do a SpritesDB location where I have every sprite's cords stores. Then call by name
+        self.image = self.game.spritesheet.get_image(820, 1805, 71, 70)
+        self.image.set_colorkey(BLACK)
+        self.rect = self.image.get_rect()
+        self.rect.centerx = self.platform.rect.centerx
+        self.rect.bottom = self.platform.rect.top - 5
+
+    def update(self):
+        self.rect.bottom = self.platform.rect.top - 5
+        if not self.game.platforms.has(self.platform):
+            self.kill()
