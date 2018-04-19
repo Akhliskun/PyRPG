@@ -68,8 +68,9 @@ class Game:
         if self.player.vel.y > 0:
             hits = pg.sprite.spritecollide(self.player, self.platforms, False)
             if hits:
-                self.player.pos.y = hits[0].rect.top + 1
-                self.player.vel.y = 0
+                if self.player.pos.y < hits[0].rect.bottom:
+                    self.player.pos.y = hits[0].rect.top + 1
+                    self.player.vel.y = 0
 
         # If player reaches top part of the screen (1/4) scroll platforms down
         if self.player.rect.top <= HEIGHT / 4:
@@ -118,7 +119,7 @@ class Game:
         # Game Loop - draw
         self.screen.fill(BGCOLOR)
         self.all_sprites.draw(self.screen)
-        self.screen.blit(self.player.image, self.player.rect)
+        self.screen.blit(self.player.image, self.player.rect)  # Places the Player Sprite ontop of everything else.
         self.draw_text(str(self.score), 22, WHITE, WIDTH / 2, 15)
 
         pg.display.flip()
