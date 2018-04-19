@@ -32,9 +32,9 @@ PLAYER_GRAVITY = 0.8
 PLAYER_JUMPPOWER = 20
 
 # Starting Platforms
-PLATFORM_LIST = [(0, HEIGHT - 40, WIDTH, 40),
-                 (WIDTH / 2 - 150, HEIGHT * 3 / 4, 100, 20),
-                 (125, HEIGHT - 250, 100, 20),
-                 (350, 300, 100, 20),
-                 (175, 200, 50, 20),
-                 (375, 50, 50, 20)]
+PLATFORM_LIST = [(0, HEIGHT - 40),
+                 (WIDTH / 2 - 150, HEIGHT * 3 / 4),
+                 (125, HEIGHT - 250),
+                 (350, 300),
+                 (175, 200),
+                 (375, 50)]

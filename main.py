@@ -46,7 +46,7 @@ class Game:
         self.all_sprites.add(self.player)
 
         for platform in PLATFORM_LIST:
-            p = Platform(*platform)  # Take the list and explode it to list items
+            p = Platform(self, *platform)  # Take the list and explode it to list items
             self.all_sprites.add(p)
             self.platforms.add(p)
 
@@ -96,9 +96,8 @@ class Game:
         # Spawn new platform to keep same avg of platforms
         while len(self.platforms) < 10:
             width = random.randrange(50, 100)
-            p = Platform(random.randrange(0, WIDTH - width),  # Generate X spawn cords.
-                         random.randrange(-75, -30),  # Generate Y spawn cords.
-                         width, 20)  # Width of platform and HEIGHT of platform
+            p = Platform(self, random.randrange(0, WIDTH - width),  # Generate X spawn cords.
+                         random.randrange(-75, -30))  # Generate Y spawn cords.
             self.all_sprites.add(p)
             self.platforms.add(p)
 
