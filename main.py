@@ -19,7 +19,6 @@ class Game():
         self.map = Map(path.join(game_folder, 'map2.txt'))
         self.player_img = pg.image.load(path.join(img_folder, PLAYER_IMG)).convert_alpha()
 
-
     def new(self):
         # initialize all variables and do all the setup for a new game
         self.all_sprites = pg.sprite.Group()
@@ -61,6 +60,8 @@ class Game():
         self.draw_grid()
         for sprite in self.all_sprites:
             self.screen.blit(sprite.image, self.camera.apply(sprite))
+        # pg.draw.rect(self.screen, WHITE, self.camera.apply(self.player), 2)
+        # pg.draw.rect(self.screen, RED, self.player.hit_rect, 2)
         pg.display.flip()
 
     def events(self):
