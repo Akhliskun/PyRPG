@@ -73,6 +73,8 @@ class Mob(pg.sprite.Sprite):
         self.image = game.mob_img
         self.rect = self.image.get_rect()
         self.pos = vec(x=x, y=y) * TILESIZE
+        self.vel = vec(x=0, y=0)
+        self.acc = vec(x=0, y=0)
         self.rect.center = self.pos
         self.rot = 0
 
@@ -80,6 +82,11 @@ class Mob(pg.sprite.Sprite):
         self.rot = (self.game.player.pos - self.pos).angle_to(vec(x=1, y=0))
         self.image = pg.transform.rotate(self.game.mob_img, self.rot)
         self.rect = self.image.get_rect()
+        self.rect.center = self.pos
+        self.acc = vec(x=MOB_SPEED, y=0).rotate(-self.rot)
+        self.acc += self.vel * -1
+        self.vel += self.acc * self.game.dt
+        self.pos += self.vel * self.game.dt * 0.5 * self.acc * self.game.dt ** 2
         self.rect.center = self.pos
 
 
