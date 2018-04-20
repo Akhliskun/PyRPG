@@ -20,3 +20,4 @@ GRIDHEIGHT = HEIGHT / TILESIZE
 
 # Player settings
 PLAYER_SPEED = 200
+PLAYER_IMG = 'manBlue_gun.png'
