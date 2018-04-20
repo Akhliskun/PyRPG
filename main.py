@@ -1,8 +1,8 @@
-import pygame as pg
 import sys
 from os import path
-from settings import *
+from tilemap import *
 from sprites import *
+
 
 class Game:
     def __init__(self):
@@ -15,17 +15,13 @@ class Game:
 
     def load_data(self):
         game_folder = path.dirname(__file__)
-        self.map_data = []
-        with open(path.join(game_folder, "map.txt"), 'rt') as f:
-            for line in f:
-                self.map_data.append(line)
-
+        self.map = Map(path.join(game_folder, 'map.txt'))
 
     def new(self):
         # initialize all variables and do all the setup for a new game
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
-        for row, tiles in enumerate(self.map_data):
+        for row, tiles in enumerate(self.map.data):
             for col, tile in enumerate(tiles):
                 if tile == '1':
                     Wall(self, col, row)
@@ -75,6 +71,7 @@ class Game:
 
     def show_go_screen(self):
         pass
+
 
 # create the game object
 g = Game()
