@@ -32,7 +32,7 @@ class Player(pg.sprite.Sprite):
         # Detect diagonal movement and apply pythagoras theorem
         # This will keep the speed of diagonal movements the same
         # with horizontal / vertical movement
-        if self.vx != 0 and self.vy != 0:
+        if (self.vx != 0) and (self.vy != 0):
             self.vx *= 0.7071
             self.vy *= 0.7071
 
